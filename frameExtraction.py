@@ -10,7 +10,7 @@ if not os.path.exists(directory):
     os.makedirs(directory)
 
 # keep a video file with name video.mp4
-path = 'video.mp4'
+path = 'video5.mp4'
 # storing video data into variable
 videoData = cv2.VideoCapture(path)
 # used as counter variable
@@ -23,6 +23,7 @@ while success:
     success, image = videoData.read()
     # Saves the frames with frame-count
     if success:
+        image=cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cv2.imwrite(directory + "/frame%04d.jpg" % count, image)
         print(count)
         count += 1

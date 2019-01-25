@@ -1,3 +1,5 @@
 !.gitignore
 .idea/
-video.mp4
+video*.mp4
+ImageCompare.py
+frameDiff.py
