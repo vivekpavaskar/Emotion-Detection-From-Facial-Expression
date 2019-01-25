@@ -5,8 +5,8 @@ i = 0
 j = 1
 diffsP = 0
 diffsN = 0
-threshold = 2700
-
+threshold = 2500
+counts = 0
 while True:
     i = i + 1
     file1 = 'dataset/997/frame%04d.jpg' % i
@@ -31,11 +31,15 @@ while True:
     diffsN = (dif / 255.0 * 10000000) / ncomponents
     img = cv2.imread(file2)
     img = cv2.resize(img, (int(img.shape[1] / 2), int(img.shape[0] / 2)))
-    cv2.imshow('asd', img)
+    cv2.imshow('frames', img)
     cv2.waitKey(1)
+
     if abs(diffsN - diffsP) > threshold:
-        print("Difference (", j, i, "):", diffsN, "difference")
+        counts = counts + 1
+        print("Difference (", j, i, "):", diffsN, "difference",counts)
         diffsP = diffsN
+        cv2.imshow('keyframes', img)
+        cv2.waitKey(1)
         j = i
     else:
         print("Difference (", i, i + 1, "):", diffsN)
