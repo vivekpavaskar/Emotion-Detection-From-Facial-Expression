@@ -26,7 +26,7 @@ while True:
     for x, y, w, h in face:
         if w > 60 and h > 60:
             # img = cv2.rectangle(img, (x - 10, y - 20), (x + w + 5, y + h + 10), (0, 0, 255), 2)
-            # img = img[y - 20:y + h + 10, x - 10:x + w + 5]
+            img = img[y - 20:y + h + 10, x - 10:x + w + 5]
             cv2.imwrite(file, img)
 
 cv2.destroyAllWindows()

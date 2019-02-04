@@ -10,7 +10,7 @@ if not os.path.exists(directory):
     os.makedirs(directory)
 
 # keep a video file with name video.mp4
-path = 'videos/video5.mp4'
+path = 'videos/videorishab.mp4'
 # storing video data into variable
 videoData = cv2.VideoCapture(path)
 # used as counter variable
