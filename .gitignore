@@ -2,3 +2,6 @@
 .idea/
 ImageCompare.py
 frameDiff.py
+__pycache__/
+newdiff.py
+mydiff.py
