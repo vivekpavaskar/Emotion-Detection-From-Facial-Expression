@@ -1,16 +1,19 @@
 # script to extract ROI
 import cv2
 import os
-def roi():
+
+
+def roi(folder):
+    dates = folder
     # initializing image variable
     img = None
     # creating face cascade opbject
     face_cascade = cv2.CascadeClassifier("haarcascad/12.xml")
     # input directory name (temporary)
     # dirName = input("Enter Dataset directory name: ")
-    i=0
+    i = 0
 
-    directoryROI = 'dataset/ROI/1'
+    directoryROI = 'dataset/ROI/' + dates
     if not os.path.exists(directoryROI):
         os.makedirs(directoryROI)
 
@@ -18,8 +21,8 @@ def roi():
         i = i + 1
         # creating path for images
         # file = 'dataset/' + dirName + '/frame%04d.jpg' % i
-        filein = 'dataset/keyFrames/1/frame%04d.jpg' % i
-        fileout = 'dataset/ROI/1/frame%04d.jpg' % i
+        filein = 'dataset/keyFrames/' + dates + '/frame%04d.jpg' % i
+        fileout = 'dataset/ROI/' + dates + '/frame%04d.jpg' % i
         print(filein)
         # reading the image file
         img = cv2.imread(filein, 0)
