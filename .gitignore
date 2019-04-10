@@ -6,3 +6,6 @@ __pycache__/
 newdiff.py
 mydiff.py
 emo.py
+*.mp4
+*.mp3
+*.wav
