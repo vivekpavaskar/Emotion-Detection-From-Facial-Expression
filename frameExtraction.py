@@ -6,14 +6,14 @@ from datetime import datetime as dt
 
 # creating timestamp based directory in dataset
 # dates = dt.now().strftime("%Y%m%d%H%M%S")
-def extractFrames():
+def extractFrames(path):
     dates = str(1)
     directoryF = 'dataset/frames/' + dates
     if not os.path.exists(directoryF):
         os.makedirs(directoryF)
 
     # keep a video file with name video.mp4
-    path = 'videos/videoshruti.mp4'
+    # path = 'videos/videoshruti.mp4'
     # storing video data into variable
     videoData = cv2.VideoCapture(path)
     # used as counter variable

@@ -1,4 +1,7 @@
 from moviepy.editor import *
-video = VideoFileClip("videos/testt.mp4")
-audio = video.audio
-audio.write_audiofile("videos/audio.wav")
+def v2a(path):
+    audioPath="videos/audio.wav"
+    video = VideoFileClip(path)
+    audio = video.audio
+    audio.write_audiofile(audioPath)
+    return audioPath

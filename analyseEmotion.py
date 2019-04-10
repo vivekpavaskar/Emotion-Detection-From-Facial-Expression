@@ -40,6 +40,7 @@ def detect_face(frame):
 
 
 def readEmotions():
+    videoEmo = {"happy": 0, "sad": 0, "disgust": 0, "anger": 0, "fear": 0, "suprise": 0, "neutral": 0}
     model = model_from_json(open('./models/Face_model_architecture.json').read())
     # model.load_weights('_model_weights.h5')
     model.load_weights('./models/Face_model_weights.h5')
@@ -85,36 +86,45 @@ def readEmotions():
 
                 # annotate main image with a label
                 if prediction_result == 3:
-                    print("happy")
-                    cv2.putText(frame, "Happy!!", (x, y), cv2.FONT_ITALIC, 2, 155, 10)
+                    # print("happy")
+                    videoEmo["happy"] += 1
+                    # cv2.putText(frame, "Happy!!", (x, y), cv2.FONT_ITALIC, 2, 155, 10)
                 elif prediction_result == 0:
-                    print("angry")
-                    cv2.putText(frame, "Angry", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    # print("angry")
+                    videoEmo["anger"] += 1
+                    # cv2.putText(frame, "Angry", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 1:
-                    print("disgust")
-                    cv2.putText(frame, "Disgust", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    # print("disgust")
+                    videoEmo["disgust"] += 1
+                    # cv2.putText(frame, "Disgust", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 2:
-                    print("fear")
-                    cv2.putText(frame, "Fear", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    # print("fear")
+                    videoEmo["fear"] += 1
+                    # cv2.putText(frame, "Fear", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 4:
-                    print("sad")
-                    cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    # print("sad")
+                    videoEmo["sad"] += 1
+                    # cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 5:
-                    print("suprize")
-                    cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    # print("suprise")
+                    videoEmo["suprise"] += 1
+                    # cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 else:
-                    print("neutral")
-                    cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    # print("neutral")
+                    videoEmo["neutral"] += 1
+                    # cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
 
                 # increment counter
                 face_index += 1
 
         # Display the resulting frame
-        cv2.imshow('Video', frame)
-        cv2.waitKey(2)
+        # cv2.imshow('Video', frame)
+        # cv2.waitKey(2)
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     break
 
     # When everything is done, release the capture
     # video_capture.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
+
+    return videoEmo
