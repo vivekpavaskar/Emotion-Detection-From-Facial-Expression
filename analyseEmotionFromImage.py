@@ -25,7 +25,7 @@ from scipy.ndimage import zoom
 
 
 def detect_face(frame):
-    cascPath = "./models/haarcascade_frontalface_default.xml"
+    cascPath = "./models/haarcascade_frontalface_alt2.xml"
     faceCascade = cv2.CascadeClassifier(cascPath)
     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = frame
@@ -39,7 +39,8 @@ def detect_face(frame):
     return gray, detected_faces
 
 
-def readEmotions():
+def readEmotions(folder):
+    dates=folder
     videoEmo = {"happy": 0, "sad": 0, "disgust": 0, "anger": 0, "fear": 0, "suprise": 0, "neutral": 0}
     model = model_from_json(open('./models/Face_model_architecture.json').read())
     # model.load_weights('_model_weights.h5')
@@ -58,10 +59,11 @@ def readEmotions():
         #    sleep(0.8)
         # ret, frame = video_capture.read()
         i = i + 1
-        filein = 'dataset/keyFrames/1/frame%04d.jpg' % i
+        filein = 'dataset/keyFrames/'+dates+'/frame%04d.jpg' % i
         frame = cv2.imread(filein, 0)
         if frame is None:
             break
+            # continue
         # detect faces
         gray, detected_faces = detect_face(frame)
 
@@ -88,43 +90,44 @@ def readEmotions():
                 if prediction_result == 3:
                     # print("happy")
                     videoEmo["happy"] += 1
-                    # cv2.putText(frame, "Happy!!", (x, y), cv2.FONT_ITALIC, 2, 155, 10)
+                    cv2.putText(frame, "Happy!!", (x, y), cv2.FONT_ITALIC, 2, 155, 10)
                 elif prediction_result == 0:
                     # print("angry")
                     videoEmo["anger"] += 1
-                    # cv2.putText(frame, "Angry", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Angry", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 1:
                     # print("disgust")
                     videoEmo["disgust"] += 1
-                    # cv2.putText(frame, "Disgust", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Disgust", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 2:
                     # print("fear")
                     videoEmo["fear"] += 1
-                    # cv2.putText(frame, "Fear", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Fear", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 4:
                     # print("sad")
                     videoEmo["sad"] += 1
-                    # cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 5:
                     # print("suprise")
                     videoEmo["suprise"] += 1
-                    # cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 else:
                     # print("neutral")
                     videoEmo["neutral"] += 1
-                    # cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
 
                 # increment counter
                 face_index += 1
 
         # Display the resulting frame
-        # cv2.imshow('Video', frame)
-        # cv2.waitKey(2)
+        cv2.imshow('Video', frame)
+        print(videoEmo)
+        cv2.waitKey(1)
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     break
 
     # When everything is done, release the capture
     # video_capture.release()
-    # cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 
     return videoEmo

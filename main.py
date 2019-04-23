@@ -1,37 +1,48 @@
 import frameExtraction as fe
 import keyFrameIdentifier as kfi
 import extractROI as eroi
-import analyseEmotion as ae
+import analyseEmotionFromImage as aefi
 import extractAudio as ea
 import audioToText as att
+import analyseEmotionFromText as aeft
+from datetime import datetime as dt
 
 if __name__ == '__main__':
-    # retrive data from DB
-    # video path and status variable
-    videoPath = 'videos/testt.mp4'
+    # code for creating timestamp based directory in dataset
+    dates = dt.now().strftime("%Y%m%d%H%M%S")
+
+    # code for retrive data from DB
+
+    # code for video path and status variable
+    videoPath = 'videos/asd.mp4'
+    statement = ""
     status = ""
+    folder = "2"
 
-    '''
     # Emotion From Video Frames
-    # frame extraction function
-    folder = fe.extractFrames(videoPath)
+    # code for frame extraction function
+    folder = fe.extractFrames(videoPath, dates)
     print(folder)
-
-    # filtering key frames from frames
+    # code for filtering key frames from frames
     kfi.filterKeyFrame(folder)
-    
-    # cropping roi from key frames
-    # eroi.roi(folder)
-    # reading emotions
-    videoEmo=ae.readEmotions()
+    # code for reading emotions from keyframes
+    videoEmo = aefi.readEmotions(folder)
     print(videoEmo)
-    # Audio Extraction From Video
-    audioPath = ea.v2a(videoPath)
-    '''
-    # Audio To Text
-    audioToText=att.a2t()
-    # Emotion From Text (statement and audio)
 
+    # Emotion From Video Converted Audio
+    # code for audio extraction
+    audioPath = ea.v2a(videoPath)
+    # code for audio to text
+    audioToText = att.a2t()
+    print(audioToText)
+    # code for reading emotions from audio converted text
+    if audioToText is not False:
+        audioToText = 'dataset/text/all.txt'
+        # audioEmo = aeft.readEmotions(audioToText)
+
+    # Emotion From Statement
+    # code for reading emotions from statement
+    # statementEmo = aeft.readEmotions(statement)
     # Decision Makaing
 
     # DB Updation

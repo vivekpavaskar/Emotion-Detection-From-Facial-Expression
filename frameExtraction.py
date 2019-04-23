@@ -1,13 +1,11 @@
 # script for frame extraction from video
 import cv2
 import os
-from datetime import datetime as dt
 
 
-# creating timestamp based directory in dataset
-# dates = dt.now().strftime("%Y%m%d%H%M%S")
-def extractFrames(path):
-    dates = str(1)
+
+def extractFrames(path,dates):
+    # dates = str(2)
     directoryF = 'dataset/frames/' + dates
     if not os.path.exists(directoryF):
         os.makedirs(directoryF)
