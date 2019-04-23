@@ -5,13 +5,12 @@ import extractAudio as ea
 import audioToText as att
 import analyseEmotionFromText as aeft
 from datetime import datetime as dt
-# import extractROI as eroi
 
 
-def startProject():
+def startProject(data):
     # code for creating timestamp based directory in dataset
+    dates=data["video"]
     dates = dt.now().strftime("%Y%m%d%H%M%S")
-
     # code for retrive data from DB
 
     # code for video path and status variable
