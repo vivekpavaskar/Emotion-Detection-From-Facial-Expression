@@ -7,7 +7,6 @@ def a2t():
         audio = r.listen(source)
     try:
         texts = r.recognize_google(audio)
-        # print(texts)
         return texts
     except:
         return False

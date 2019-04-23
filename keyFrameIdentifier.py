@@ -53,22 +53,22 @@ def filterKeyFrame(folder):
         imgResize = cv2.resize(img, (int(img.shape[1] / 2), int(img.shape[0] / 2)))
         # imgResize = cv2.resize(img, (100,100))
         # imgResize = cv2.resize(img, (600,600))
-        cv2.imshow('frames', imgResize)
-        cv2.waitKey(1)
+        # cv2.imshow('frames', imgResize)
+        # cv2.waitKey(1)
         diffValue = abs(diffsN - diffsP)
         if diffValue > threshold:
             counts = counts + 1
-            print("Difference (", j, i, "):", diffValue, "difference", counts)
+            # print("Difference (", j, i, "):", diffValue, "difference", counts)
             diffsP = diffsN
-            cv2.imshow('keyframes', imgResize)
-            cv2.waitKey(1)
+            # cv2.imshow('keyframes', imgResize)
+            # cv2.waitKey(1)
             j = i
             i1 = i2
             k = k + 1
             imgp = img
             keyFrames = 'dataset/keyFrames/' + dates + '/frame%04d.jpg' % k
             cv2.imwrite(keyFrames, imgp)
-        else:
-            print("Difference (", j, i, "):", diffValue)
+        # else:
+            # print("Difference (", j, i, "):", diffValue)
 
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()

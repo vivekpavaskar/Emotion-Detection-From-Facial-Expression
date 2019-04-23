@@ -1,13 +1,14 @@
 import frameExtraction as fe
 import keyFrameIdentifier as kfi
-import extractROI as eroi
 import analyseEmotionFromImage as aefi
 import extractAudio as ea
 import audioToText as att
 import analyseEmotionFromText as aeft
 from datetime import datetime as dt
+# import extractROI as eroi
 
-if __name__ == '__main__':
+
+def startProject():
     # code for creating timestamp based directory in dataset
     dates = dt.now().strftime("%Y%m%d%H%M%S")
 
@@ -38,7 +39,8 @@ if __name__ == '__main__':
     # code for reading emotions from audio converted text
     if audioToText is not False:
         audioToText = 'dataset/text/all.txt'
-        # audioEmo = aeft.readEmotions(audioToText)
+        audioEmo = aeft.readEmotions(audioToText)
+        print(audioEmo)
 
     # Emotion From Statement
     # code for reading emotions from statement
@@ -46,3 +48,7 @@ if __name__ == '__main__':
     # Decision Makaing
 
     # DB Updation
+
+    return "completed"
+
+startProject()

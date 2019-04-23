@@ -3,15 +3,13 @@ import cv2
 import os
 
 
-
-def extractFrames(path,dates):
+def extractFrames(path, dates):
     # dates = str(2)
     directoryF = 'dataset/frames/' + dates
     if not os.path.exists(directoryF):
         os.makedirs(directoryF)
 
     # keep a video file with name video.mp4
-    # path = 'videos/videoshruti.mp4'
     # storing video data into variable
     videoData = cv2.VideoCapture(path)
     # used as counter variable
@@ -30,7 +28,7 @@ def extractFrames(path,dates):
             # rotated=cv2.getRotationMatrix2D(center,90,1.0)
             # rotated90=cv2.warpAffine(image,rotated,(w,h))
             cv2.imwrite(directoryF + "/frame%04d.jpg" % count, image)
-            print(count)
+            # print(count)
             count += 1
 
     return dates
