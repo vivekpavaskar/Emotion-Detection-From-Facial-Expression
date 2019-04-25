@@ -4,20 +4,18 @@ import analyseEmotionFromImage as aefi
 import extractAudio as ea
 import audioToText as att
 import analyseEmotionFromText as aeft
-from datetime import datetime as dt
+import decisionMaking as dm
 
 
 def startProject(data):
     # code for creating timestamp based directory in dataset
-    dates=data["video"]
-    dates = dt.now().strftime("%Y%m%d%H%M%S")
+    dates=data["video"][:-4]
     # code for retrive data from DB
 
     # code for video path and status variable
     videoPath = 'videos/asd.mp4'
-    statement = ""
-    status = ""
-    folder = "2"
+    statement = data["statement"]
+    folder = ""
 
     # Emotion From Video Frames
     # code for frame extraction function
@@ -36,18 +34,20 @@ def startProject(data):
     audioToText = att.a2t()
     print(audioToText)
     # code for reading emotions from audio converted text
-    if audioToText is not False:
-        audioToText = 'dataset/text/all.txt'
-        audioEmo = aeft.readEmotions(audioToText)
-        print(audioEmo)
+    # if audioToText is not False:
+    #     audioToText = 'dataset/text/all.txt'
+    #     audioEmo = aeft.readEmotions(audioToText)
+    #     print(audioEmo)
 
     # Emotion From Statement
     # code for reading emotions from statement
     # statementEmo = aeft.readEmotions(statement)
     # Decision Makaing
-
-    # DB Updation
+    dm.decide(videoEmo,
+              audioEmo={'happy': 0, 'sad': 46, 'disgust': 0, 'anger': 0, 'fear': 0, 'suprise': 0, 'neutral': 0},
+              statementEmo={'happy': 0, 'sad': 46, 'disgust': 0, 'anger': 0, 'fear': 0, 'suprise': 0, 'neutral': 0})
 
     return "completed"
 
-startProject()
+
+# startProject(0)

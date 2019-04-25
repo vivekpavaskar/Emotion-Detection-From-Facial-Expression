@@ -1,9 +1,7 @@
 from flask import Flask
 from flask_mysqldb import MySQL
+from main import startProject
 
-# import main
-
-# from flask_mysqldb import MySQL
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -14,9 +12,8 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    decision=True
     cur = mysql.connection.cursor()
-    cur.execute('''SELECT * FROM `complaints` WHERE status='Applied' ''')
+    cur.execute('''SELECT * FROM `complaints` WHERE status='Applied' limit 1 ''')
     result = cur.fetchall()
     result=result[0]
     data={}
@@ -24,13 +21,9 @@ def index():
     data["statement"]=result[9]
     data["video"]=result[10]
     data["status"]=result[11]
-    # decision = main.startProject(data)
-    # if decision :
-    #     cur.execute(''' ''')
-    # else:
-    #     cur.execute(''' ''')
+    decision = startProject(data)
+    return decision
 
-    return str(data)
 
 
 if __name__ == '__main__':
