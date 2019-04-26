@@ -12,18 +12,26 @@ mysql = MySQL(app)
 
 @app.route('/')
 def index():
-    cur = mysql.connection.cursor()
-    cur.execute('''SELECT * FROM `complaints` WHERE status='Applied' limit 1 ''')
+    conn = mysql.connection
+    cur = conn.cursor()
+    sql = "SELECT * FROM `complaints` WHERE status='Applied' limit 1"
+    cur.execute(sql)
     result = cur.fetchall()
-    result=result[0]
-    data={}
-    data["id"]=result[0]
-    data["statement"]=result[9]
-    data["video"]=result[10]
-    data["status"]=result[11]
+    if len(result) == 0:
+        return "ALL COMPLAINTS PROCESSED"
+    result = result[0]
+    data = {}
+    data["id"] = str(result[0])
+    data["statement"] = result[9]
+    data["video"] = result[10]
+    data["status"] = result[11]
     decision = startProject(data)
-    return decision
-
+    cur = mysql.connection.cursor()
+    sql = '''UPDATE `complaints` SET `status` = %s WHERE `complaints`.`id` = %s'''
+    sqlv = (decision, data["id"])
+    cur.execute(sql, sqlv)
+    conn.commit()
+    return str(data)
 
 
 if __name__ == '__main__':

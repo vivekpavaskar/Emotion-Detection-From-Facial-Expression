@@ -4,12 +4,11 @@ import os
 
 
 def extractFrames(path, dates):
-    # dates = str(2)
+    # initializing directory path
     directoryF = 'dataset/frames/' + dates
     if not os.path.exists(directoryF):
         os.makedirs(directoryF)
 
-    # keep a video file with name video.mp4
     # storing video data into variable
     videoData = cv2.VideoCapture(path)
     # used as counter variable
@@ -23,12 +22,10 @@ def extractFrames(path, dates):
         # Saves the frames with frame-count
         if success:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            # (h,w)=image.shape[:2]
-            # center=(w/2,h/2)
-            # rotated=cv2.getRotationMatrix2D(center,90,1.0)
-            # rotated90=cv2.warpAffine(image,rotated,(w,h))
             cv2.imwrite(directoryF + "/frame%04d.jpg" % count, image)
+            # start development
             # print(count)
+            # end development
             count += 1
 
     return dates
