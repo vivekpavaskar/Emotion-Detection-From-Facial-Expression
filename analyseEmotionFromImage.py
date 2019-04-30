@@ -39,7 +39,7 @@ def detect_face(frame):
 
 def readEmotions(folder):
     dates = folder
-    videoEmo = {"happy": 0, "sad": 0, "disgust": 0, "anger": 0, "fear": 0, "suprise": 0, "neutral": 0}
+    videoEmo = {"happy": 0, "sad": 0, "disgust": 0, "anger": 0, "fear": 0, "surprise": 0, "neutral": 0}
     model = model_from_json(open('./models/Face_model_architecture.json').read())
     # model.load_weights('_model_weights.h5')
     model.load_weights('./models/Face_model_weights.h5')
@@ -97,8 +97,8 @@ def readEmotions(folder):
                     # print("sad")
                     # cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 5:
-                    videoEmo["suprise"] += 1
-                    # print("suprise")
+                    videoEmo["surprise"] += 1
+                    # print("surprise")
                     # cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 else:
                     videoEmo["neutral"] += 1

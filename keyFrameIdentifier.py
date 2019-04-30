@@ -5,7 +5,7 @@ import cv2
 
 def filterKeyFrame(folder):
     dates = folder
-    #initializing directory path
+    # initializing directory path
     directoryKF = 'dataset/keyFrames/' + dates
     if not os.path.exists(directoryKF):
         os.makedirs(directoryKF)

@@ -1,130 +1,191 @@
+import csv
 import nltk
-from nltk.classify.naivebayes import NaiveBayesClassifier
 
 
-def get_words_in_dataset(dataset):
-    all_words = []
-    for (words, sentiment) in dataset:
-        all_words.extend(words)
-    return all_words
+def readEmotions(data):
+    trainData = list(csv.reader(open("dataset/text/trainDataText.csv", 'r')))
+    textEmo = {"happy": 0.0, "sad": 0.0, "disgust": 0.0, "anger": 0.0, "fear": 0.0, "surprise": 0.0, "neutral": 0.0}
+    # happy 5  sad 4  disgust 0  anger 3  fear 6  surprise 1  neutral 2
+    trainData.pop(0)
+    emotions = {}
+    for word in trainData:
+        emotions[word[0][:-1]] = word[1:]
 
-
-def get_word_features(wordlist):
-    wordlist = nltk.FreqDist(wordlist)
-    word_features = wordlist.keys()
-    return word_features
-
-
-def read_datasets(fname, t_type):
-    data = []
-    f = open(fname, encoding="utf8")
-    for line in f:
-        if line != '':
-            data.append([line, t_type])
-    f.close()
-    return data
-
-
-def extract_features(word_features, document):
-    document_words = set(document)
-    features = {}
-    for word in word_features:
-        features['contains(%s)' % word] = (word in document_words)
-    return features
-
-
-def classify_dataset(word_features, classifier, data):
-    return classifier.classify(extract_features(word_features, nltk.word_tokenize(data)))
-
-
-def readEmotions(textdata):
-    textEmo = {"happy": 0, "sad": 0, "disgust": 0, "anger": 0, "fear": 0, "suprise": 0, "neutral": 0}
-    print("1")
-    # read in joy , disgust, sadness, shame, anger, guilt, fear training dataset
-    anger_feel = read_datasets('dataset/text/anger.txt', 'anger')
-    disgust_feel = read_datasets('dataset/text/disgust.txt', 'disgust')
-    fear_feel = read_datasets('dataset/text/fear.txt', 'fear')
-    happy_feel = read_datasets('dataset/text/happy.txt', 'happy')
-    neutral_feel = read_datasets('dataset/text/neutral.txt', 'neutral')
-    sad_feel = read_datasets('dataset/text/sad.txt', 'sad')
-    surprise_feel = read_datasets('dataset/text/surprise.txt', 'surprise')
-    print("2")
-    # filter away words that are less than 3 letters to form the training data
-    data = []
-    for (
-            words,
-            sentiment) in happy_feel + disgust_feel + surprise_feel + sad_feel + anger_feel + neutral_feel + fear_feel:
-        words_filtered = [e.lower() for e in words.split() if len(e) >= 3]
-        data.append((words_filtered, sentiment))
-
-    print("3")
-    # extract the word features out from the training data
-    word_features = get_word_features(get_words_in_dataset(data))
-
-    print("4")
-    # get the training set and train the Naive Bayes Classifier
-    training_set = nltk.classify.util.apply_features(word_features, extract_features, data)
-    classifier = NaiveBayesClassifier.train(training_set)
-
-    print("5")
-    # read in the test tweets and check accuracy
-    anger_data = read_datasets(textdata, 'anger')
-    disgust_data = read_datasets(textdata, 'disgust')
-    fear_data = read_datasets(textdata, 'fear')
-    happy_data = read_datasets(textdata, 'happy')
-    neutral_data = read_datasets(textdata, 'neutral')
-    sad_data = read_datasets(textdata, 'sad')
-    surprise_data = read_datasets(textdata, 'suprize')
-    # test_data.extend(read_datasets(textdata, 'sadness'))
-    print("6")
-
-    total = accuracy = float(len(anger_data))
-    for data in anger_data:
-        if classify_dataset(classifier, data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy anger: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["anger"] = accuracy
-
-    total = accuracy = float(len(disgust_data))
-    for data in disgust_data:
-        if classify_dataset(data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy disgust: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["disgust"] = accuracy
-
-    total = accuracy = float(len(fear_data))
-    for data in fear_data:
-        if classify_dataset(data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy fear: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["fear"] = accuracy
-
-    total = accuracy = float(len(happy_data))
-    for data in happy_data:
-        if classify_dataset(data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy happy: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["happy"] = accuracy
-
-    total = accuracy = float(len(neutral_data))
-    for data in neutral_data:
-        if classify_dataset(data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy neutral: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["neutral"] = accuracy
-
-    total = accuracy = float(len(sad_data))
-    for data in sad_data:
-        if classify_dataset(data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy sad: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["sad"] = accuracy
-
-    total = accuracy = float(len(surprise_data))
-    for data in surprise_data:
-        if classify_dataset(data[0]) != data[1]:
-            accuracy -= 1
-    print('Total accuracy surprise: %f%% (%d/%d).' % (accuracy / total * 100, accuracy, total))
-    textEmo["suprise"] = accuracy
+    testData = nltk.word_tokenize(data)
+    for word in testData:
+        word = word.lower()
+        if word in emotions.keys():
+            textEmo["disgust"] = textEmo["disgust"] + float(emotions[word][0])
+            textEmo["surprise"] = textEmo["surprise"] + float(emotions[word][1])
+            textEmo["neutral"] = textEmo["neutral"] + float(emotions[word][2])
+            textEmo["anger"] = textEmo["anger"] + float(emotions[word][3])
+            textEmo["sad"] = textEmo["sad"] + float(emotions[word][4])
+            textEmo["happy"] = textEmo["happy"] + float(emotions[word][5])
+            textEmo["fear"] = textEmo["fear"] + float(emotions[word][6])
 
     return textEmo
+
+
+'''
+out = readEmotions("""
+Your honor,
+
+If it is all right, for the majority of this statement I would like to address the defendant directly.
+
+You don’t know me, but you’ve been inside me, and that’s why we’re here today.
+
+On January 17th, 2015, it was a quiet Saturday night at home. My dad made some dinner and I sat at the table with my younger sister who was visiting for the weekend. I was working full time and it was approaching my bed time. I planned to stay at home by myself, watch some TV and read, while she went to a party with her friends. Then, I decided it was my only night with her, I had nothing better to do, so why not, there’s a dumb party ten minutes from my house, I would go, dance weird like a fool, and embarrass my younger sister. On the way there, I joked that undergrad guys would have braces. My sister teased me for wearing a beige cardigan to a frat party like a librarian. I called myself “big mama,” because I knew I’d be the oldest one there. I made silly faces, let my guard down, and drank liquor too fast not factoring in that my tolerance had significantly lowered since college.
+
+The next thing I remember I was in a gurney in a hallway. I had dried blood and bandages on the backs of my hands and elbow. I thought maybe I had fallen and was in an admin office on campus. I was very calm and wondering where my sister was. A deputy explained I had been assaulted. I still remained calm, assured he was speaking to the wrong person. I knew no one at this party. When I was finally allowed to use the restroom, I pulled down the hospital pants they had given me, went to pull down my underwear, and felt nothing. I still remember the feeling of my hands touching my skin and grabbing nothing. I looked down and there was nothing. The thin piece of fabric, the only thing between my vagina and anything else, was missing and everything inside me was silenced. I still don’t have words for that feeling. In order to keep breathing, I thought maybe the policemen used scissors to cut them off for evidence.
+
+Then, I felt pine needles scratching the back of my neck and started pulling them out my hair. I thought maybe, the pine needles had fallen from a tree onto my head. My brain was talking my gut into not collapsing. Because my gut was saying, help me, help me.
+
+I shuffled from room to room with a blanket wrapped around me, pine needles trailing behind me, I left a little pile in every room I sat in. I was asked to sign papers that said “Rape Victim” and I thought something has really happened. My clothes were confiscated and I stood naked while the nurses held a ruler to various abrasions on my body and photographed them. The three of us worked to comb the pine needles out of my hair, six hands to fill one paper bag. To calm me down, they said it’s just the flora and fauna, flora and fauna. I had multiple swabs inserted into my vagina and anus, needles for shots, pills, had a nikon pointed right into my spread legs. I had long, pointed beaks inside me and had my vagina smeared with cold, blue paint to check for abrasions.
+
+After a few hours of this, they let me shower. I stood there examining my body beneath the stream of water and decided, I don’t want my body anymore. I was terrified of it, I didn’t know what had been in it, if it had been contaminated, who had touched it. I wanted to take off my body like a jacket and leave it at the hospital with everything else.
+
+On that morning, all that I was told was that I had been found behind a dumpster, potentially penetrated by a stranger, and that I should get retested for HIV because results don’t always show up immediately. But for now, I should go home and get back to my normal life. Imagine stepping back into the world with only that information. They gave me huge hugs, and then I walked out of the hospital into the parking lot wearing the new sweatshirt and sweatpants they provided me, as they had only allowed me to keep my necklace and shoes.
+
+My sister picked me up, face wet from tears and contorted in anguish. Instinctively and immediately, I wanted to take away her pain. I smiled at her, I told her to look at me, I’m right here, I’m okay, everything’s okay, I’m right here. My hair is washed and clean, they gave me the strangest shampoo, calm down, and look at me. Look at these funny new sweatpants and sweatshirt, I look like a P.E. teacher, let’s go home, let’s eat something. She did not know that beneath my sweats, I had scratches and bandages on my skin, my vagina was sore and had become a strange, dark color from all the prodding, my underwear was missing, and I felt too empty to continue to speak. That I was also afraid, that I was also devastated. That day we drove home and for hours my sister held me.
+
+My boyfriend did not know what happened, but called that day and said, “I was really worried about you last night, you scared me, did you make it home okay?” I was horrified. That’s when I learned I had called him that night in my blackout, left an incomprehensible voicemail, that we had also spoken on the phone, but I was slurring so heavily he was scared for me, that he repeatedly told me to go find my sister. Again, he asked me, “What happened last night? Did you make it home okay?” I said yes, and hung up to cry.
+
+I was not ready to tell my boyfriend or parents that actually, I may have been raped behind a dumpster, but I don’t know by who or when or how. If I told them, I would see the fear on their faces, and mine would multiply by tenfold, so instead I pretended the whole thing wasn’t real.
+
+I tried to push it out of my mind, but it was so heavy I didn’t talk, I didn’t eat, I didn’t sleep, I didn’t interact with anyone. After work, I would drive to a secluded place to scream. I didn’t talk, I didn’t eat, I didn’t sleep, I didn’t interact with anyone, and I became isolated from the ones I loved most. For one week after the incident, I didn’t get any calls or updates about that night or what happened to me. The only symbol that proved that it hadn’t just been a bad dream, was the sweatshirt from the hospital in my drawer.
+
+One day, I was at work, scrolling through the news on my phone, and came across an article. In it, I read and learned for the first time about how I was found unconscious, with my hair disheveled, long necklace wrapped around my neck, bra pulled out of my dress, dress pulled off over my shoulders and pulled up above my waist, that I was butt naked all the way down to my boots, legs spread apart, and had been penetrated by a foreign object by someone I did not recognize. This was how I learned what happened to me, sitting at my desk reading the news at work. I learned what happened to me the same time everyone else in the world learned what happened to me. That’s when the pine needles in my hair made sense, they didn’t fall from a tree. He had taken off my underwear, his fingers had been inside of me. I don’t even know this person. I still don’t know this person. When I read about me like this, I said, this can’t be me.
+
+This can’t be me. I could not digest or accept any of this information. I could not imagine my family having to read about this online. I kept reading. In the next paragraph, I read something that I will never forgive; I read that according to him, I liked it. I liked it. Again, I do not have words for these feelings.
+
+At the bottom of the article, after I learned about the graphic details of my own sexual assault, the article listed his swimming times. She was found breathing, unresponsive with her underwear six inches away from her bare stomach curled in fetal position. By the way, he’s really good at swimming. Throw in my mile time if that’s what we’re doing. I’m good at cooking, put that in there, I think the end is where you list your extra-curriculars to cancel out all the sickening things that’ve happened.
+
+The night the news came out I sat my parents down and told them that I had been assaulted, to not look at the news because it’s upsetting, just know that I’m okay, I’m right here, and I’m okay. But halfway through telling them, my mom had to hold me because I could no longer stand up. I was not okay.
+
+The night after it happened, he said he didn’t know my name, said he wouldn’t be able to identify my face in a lineup, didn’t mention any dialogue between us, no words, only dancing and kissing. Dancing is a cute term; was it snapping fingers and twirling dancing, or just bodies grinding up against each other in a crowded room? I wonder if kissing was just faces sloppily pressed up against each other? When the detective asked if he had planned on taking me back to his dorm, he said no. When the detective asked how we ended up behind the dumpster, he said he didn’t know. He admitted to kissing other girls at that party, one of whom was my own sister who pushed him away. He admitted to wanting to hook up with someone. I was the wounded antelope of the herd, completely alone and vulnerable, physically unable to fend for myself, and he chose me. Sometimes I think, if I hadn’t gone, then this never would’ve happened. But then I realized, it would have happened, just to somebody else. You were about to enter four years of access to drunk girls and parties, and if this is the foot you started off on, then it is right you did not continue.
+
+The night after it happened, he said he thought I liked it because I rubbed his back. A back rub. Never mentioned me voicing consent, never mentioned us speaking, a back rub.
+
+One more time, in public news, I learned that my ass and vagina were completely exposed outside, my breasts had been groped, fingers had been jabbed inside me along with pine needles and debris, my bare skin and head had been rubbing against the ground behind a dumpster, while an erect freshman was humping my half naked, unconscious body. But I don’t remember, so how do I prove I didn’t like it.
+
+I thought there’s no way this is going to trial; there were witnesses, there was dirt in my body, he ran but was caught. He’s going to settle, formally apologize, and we will both move on. Instead, I was told he hired a powerful attorney, expert witnesses, private investigators who were going to try and find details about my personal life to use against me, find loopholes in my story to invalidate me and my sister, in order to show that this sexual assault was in fact a misunderstanding. That he was going to go to any length to convince the world he had simply been confused.
+
+I was not only told that I was assaulted, I was told that because I couldn’t remember, I technically could not prove it was unwanted. And that distorted me, damaged me, almost broke me. It is the saddest type of confusion to be told I was assaulted and nearly raped, blatantly out in the open, but we don’t know if it counts as assault yet. I had to fight for an entire year to make it clear that there was something wrong with this situation.
+
+When I was told to be prepared in case we didn’t win, I said, I can’t prepare for that. He was guilty the minute I woke up. No one can talk me out of the hurt he caused me. Worst of all, I was warned, because he now knows you don’t remember, he is going to get to write the script. He can say whatever he wants and no one can contest it. I had no power, I had no voice, I was defenseless. My memory loss would be used against me. My testimony was weak, was incomplete, and I was made to believe that perhaps, I am not enough to win this. That’s so damaging. His attorney constantly reminded the jury, the only one we can believe is Brock, because she doesn’t remember. That helplessness was traumatizing.
+
+Instead of taking time to heal, I was taking time to recall the night in excruciating detail, in order to prepare for the attorney’s questions that would be invasive, aggressive, and designed to steer me off course, to contradict myself, my sister, phrased in ways to manipulate my answers. Instead of his attorney saying, Did you notice any abrasions? He said, You didn’t notice any abrasions, right? This was a game of strategy, as if I could be tricked out of my own worth. The sexual assault had been so clear, but instead, here I was at the trial, answering question like:
+
+How old are you? How much do you weigh? What did you eat that day? Well what did you have for dinner? Who made dinner? Did you drink with dinner? No, not even water? When did you drink? How much did you drink? What container did you drink out of? Who gave you the drink? How much do you usually drink? Who dropped you off at this party? At what time? But where exactly? What were you wearing? Why were you going to this party? What’ d you do when you got there? Are you sure you did that? But what time did you do that? What does this text mean? Who were you texting? When did you urinate? Where did you urinate? With whom did you urinate outside? Was your phone on silent when your sister called? Do you remember silencing it? Really because on page 53 I’d like to point out that you said it was set to ring. Did you drink in college? You said you were a party animal? How many times did you black out? Did you party at frats? Are you serious with your boyfriend? Are you sexually active with him? When did you start dating? Would you ever cheat? Do you have a history of cheating? What do you mean when you said you wanted to reward him? Do you remember what time you woke up? Were you wearing your cardigan? What color was your cardigan? Do you remember any more from that night? No? Okay, we’ll let Brock fill it in.
+
+I was pummeled with narrowed, pointed questions that dissected my personal life, love life, past life, family life, inane questions, accumulating trivial details to try and find an excuse for this guy who didn’t even take the time to ask me for my name, who had me naked a handful of minutes after seeing me. After a physical assault, I was assaulted with questions designed to attack me, to say see, her facts don’t line up, she’s out of her mind, she’s practically an alcoholic, she probably wanted to hook up, he’s like an athlete right, they were both drunk, whatever, the hospital stuff she remembers is after the fact, why take it into account, Brock has a lot at stake so he’s having a really hard time right now.
+
+And then it came time for him to testify. This is where I became revictimized. I want to remind you, the night after it happened he said he never planned to take me back to his dorm. He said he didn’t know why we were behind a dumpster. He got up to leave because he wasn’t feeling well when he was suddenly chased and attacked. Then he learned I could not remember.
+
+So one year later, as predicted, a new dialogue emerged. Brock had a strange new story, almost sounded like a poorly written young adult novel with kissing and dancing and hand holding and lovingly tumbling onto the ground, and most importantly in this new story, there was suddenly consent. One year after the incident, he remembered, oh yeah, by the way she actually said yes, to everything, so.
+
+He said he had asked if I wanted to dance. Apparently I said yes. He’d asked if I wanted to go to his dorm, I said yes. Then he asked if he could finger me and I said yes. Most guys don’t ask, Can I finger you? Usually there’s a natural progression of things, unfolding consensually, not a Q and A. But apparently I granted full permission. He’s in the clear.
+
+Even in this story, there’s barely any dialogue; I only said a total of three words before he had me half naked on the ground. I have never been penetrated after three words. He didn’t claim to hear me speak one full sentence that night, so in the news when it says we “met”, I’m not sure I would go so far as to say that. Future reference, if you are confused about whether a girl can consent, see if she can speak an entire sentence. You couldn’t even do that. Just one coherent string of words. If she can’t do that, then no. Don’t touch her, just no. Not maybe, just no. Where was the confusion? This is common sense, human decency.
+
+According to him, the only reason we were on the ground was because I fell down. Note; if a girl falls help her get back up. If she is too drunk to even walk and falls, do not mount her, hump her, take off her underwear, and insert your hand inside her vagina. If a girl falls help her up. If she is wearing a cardigan over her dress don’t take it off so that you can touch her breasts. Maybe she is cold, maybe that’s why she wore the cardigan. If her bare ass and legs are rubbing the pinecones and needles, while the weight of you pushes into her, get off her.
+
+Next in the story, two people approached you. You ran because you said you felt scared. I argue that you were scared because you’d be caught, not because you were scared of two terrifying Swedish grad students. The idea that you thought you were being attacked out of the blue was ludicrous. That it had nothing to do with you being on top my unconscious body. You were caught red handed, with no explanation. When they tackled you why didn’t say, “Stop! Everything’s okay, go ask her, she’s right over there, she’ll tell you.” I mean you had just asked for my consent, right? I was awake, right? When the policeman arrived and interviewed the evil Swede who tackled you, he was crying so hard he couldn’t speak because of what he’d seen. Also, if you really did think they were dangerous, you just abandoned a half-naked girl to run and save yourself. No matter which way you frame it, it doesn’t make sense.
+
+Your attorney has repeatedly pointed out, well we don’t know exactly when she became unconscious. And you’re right, maybe I was still fluttering my eyes and wasn’t completely limp yet, fine. His guilt did not depend on him knowing the exact second that I became unconscious, that is never what this was about. I was slurring, too drunk to consent way before I was on the ground. I should have never been touched in the first place. Brock stated, “At no time did I see that she was not responding. If at any time I thought she was not responding, I would have stopped immediately.” Here’s the thing; if your plan was to stop only when I was literally unresponsive, then you still do not understand. You didn’t even stop when I was unconscious anyway! Someone else stopped you. Two guys on bikes noticed I wasn’t moving in the dark and had to tackle you. How did you not notice while on top of me?
+
+You said, you would have stopped and gotten help. You say that, but I want you to explain how you would’ve helped me, step by step, walk me through this. I want to know, if those evil Swedes had not found me, how the night would have played out. I am asking you; Would you have pulled my underwear back on over my boots? Untangled the necklace wrapped around my neck? Closed my legs, covered me? Tucked my bra back into my dress? Would you have helped me pick the needles from my hair? Asked if the abrasions on my neck and bottom hurt? Would you then go find a friend and say, Will you help me get her somewhere warm and soft? I don’t sleep when I think about the way it could have gone if the Swedes had never come. What would have happened to me? That’s what you’ll never have a good answer for, that’s what you can’t explain even after a year.
+
+To sit under oath and inform all of us, that yes I wanted it, yes I permitted it, and that you are the true victim attacked by guys for reasons unknown to you is sick, is demented, is selfish, is stupid. It shows that you were willing to go to any length, to discredit me, invalidate me, and explain why it was okay to hurt me. You tried unyieldingly to save yourself, your reputation, at my expense.
+
+My family had to see pictures of my head strapped to a gurney full of pine needles, of my body in the dirt with my eyes closed, dress hiked up, limbs limp in the dark. And then even after that, my family had to listen to your attorney say, the pictures were after the fact, we can dismiss them. To say, yes her nurse confirmed there was redness and abrasions inside her, but that’s what happens when you finger someone, and he’s already admitted to that. To listen to him use my own sister against me. To listen him attempt to paint of a picture of me, the seductive party animal, as if somehow that would make it so that I had this coming for me. To listen to him say I sounded drunk on the phone because I’m silly and that’s my goofy way of speaking. To point out that in the voicemail, I said I would reward my boyfriend and we all know what I was thinking. I assure you my rewards program is non-transferable, especially to any nameless man that approaches me.
+
+The point is, this is everything my family and I endured during the trial. This is everything I had to sit through silently, taking it, while he shaped the evening. It is enough to be suffering. It is another thing to have someone ruthlessly working to diminish the gravity and validity of this suffering. But in the end, his unsupported statements and his attorney’s twisted logic fooled no one. The truth won, the truth spoke for itself.
+
+You are guilty. Twelve jurors convicted you guilty of three felony counts beyond reasonable doubt, that’s twelve votes per count, thirty-six yeses confirming guilt, that’s one hundred percent, unanimous guilt. And I thought finally it is over, finally he will own up to what he did, truly apologize, we will both move on and get better. Then I read your statement.
+
+If you are hoping that one of my organs will implode from anger and I will die, I’m almost there. You are very close. Assault is not an accident. This is not a story of another drunk college hook-up with poor decision making. Somehow, you still don’t get it. Somehow, you still sound confused.
+
+I will now take this opportunity to read portions of the defendant’s statement and respond to them.
+
+You said, Being drunk I just couldn’t make the best decisions and neither could she.
+
+Alcohol is not an excuse. Is it a factor? Yes. But alcohol was not the one who stripped me, fingered me, had my head dragging against the ground, with me almost fully naked. Having too much to drink was an amateur mistake that I admit to, but it is not criminal. Everyone in this room has had a night where they have regretted drinking too much, or knows someone close to them who has had a night where they have regretted drinking too much. Regretting drinking is not the same as regretting sexual assault. We were both drunk, the difference is I did not take off your pants and underwear, touch you inappropriately, and run away. That’s the difference.
+
+You said, If I wanted to get to know her, I should have asked for her number, rather than asking her to go back to my room.
+
+I’m not mad because you didn’t ask for my number. Even if you did know me, I would not want be in this situation. My own boyfriend knows me, but if he asked to finger me behind a dumpster, I would slap him. No girl wants to be in this situation. Nobody. I don’t care if you know their phone number or not.
+
+You said, I stupidly thought it was okay for me to do what everyone around me was doing, which was drinking. I was wrong.
+
+Again, you were not wrong for drinking. Everyone around you was not sexually assaulting me. You were wrong for doing what nobody else was doing, which was pushing your erect dick in your pants against my naked, defenseless body concealed in a dark area, where partygoers could no longer see or protect me, and own my sister could not find me. Sipping fireball is not your crime. Peeling off and discarding my underwear like a candy wrapper to insert your finger into my body, is where you went wrong. Why am I still explaining this.
+
+You said, During the trial I didn’t want to victimize her at all. That was just my attorney and his way of approaching the case.
+
+Your attorney is not your scapegoat, he represents you. Did your attorney say some incredulously infuriating, degrading things? Absolutely. He said you had an erection, because it was cold. I have no words.
+
+You said, you are in the process of establishing a program for high school and college students in which you speak about your experience to “speak out against the college campus drinking culture and the sexual promiscuity that goes along with that.”
+
+Speak out against campus drinking culture. That’s what we’re speaking out against? You think that’s what I’ve spent the past year fighting for? Not awareness about campus sexual assault, or rape, or learning to recognize consent. Campus drinking culture. Down with Jack Daniels. Down with Skyy Vodka. If you want talk to high school kids about drinking go to an AA meeting. You realize, having a drinking problem is different than drinking and then forcefully trying to have sex with someone? Show men how to respect women, not how to drink less.
+
+Drinking culture and the sexual promiscuity that goes along with that. Goes along with that, like a side effect, like fries on the side of your order. Where does promiscuity even come into play? I don’t see headlines that read, Brock Turner, Guilty of drinking too much and the sexual promiscuity that goes along with that. Campus Sexaul Assault. There’s your first powerpoint slide.
+
+I have done enough explaining. You do not get to shrug your shoulders and be confused anymore. You do not get to pretend that there were no red flags. You do not get to not know why you ran. You have been convicted of violating me with malicious intent, and all you can admit to is consuming alcohol. Do not talk about the sad way your life was upturned because alcohol made you do bad things. Figure out how to take responsibility for your own conduct.
+
+Lastly you said, I want to show people that one night of drinking can ruin a life.
+
+Ruin a life, one life, yours, you forgot about mine. Let me rephrase for you, I want to show people that one night of drinking can ruin two lives. You and me. You are the cause, I am the effect. You have dragged me through this hell with you, dipped me back into that night again and again. You knocked down both our towers, I collapsed at the same time you did. Your damage was concrete; stripped of titles, degrees, enrollment. My damage was internal, unseen, I carry it with me. You took away my worth, my privacy, my energy, my time, my safety, my intimacy, my confidence, my own voice, until today.
+
+See one thing we have in common is that we were both unable to get up in the morning. I am no stranger to suffering. You made me a victim. In newspapers my name was “unconscious intoxicated woman”, ten syllables, and nothing more than that. For a while, I believed that that was all I was. I had to force myself to relearn my real name, my identity. To relearn that this is not all that I am. That I am not just a drunk victim at a frat party found behind a dumpster, while you are the All-American swimmer at a top university, innocent until proven guilty, with so much at stake. I am a human being who has been irreversibly hurt, who waited a year to figure out if I was worth something.
+
+My independence, natural joy, gentleness, and steady lifestyle I had been enjoying became distorted beyond recognition. I became closed off, angry, self-deprecating, tired, irritable, empty. The isolation at times was unbearable. You cannot give me back the life I had before that night either. While you worry about your shattered reputation, I refrigerated spoons every night so when I woke up, and my eyes were puffy from crying, I would hold the spoons to my eyes to lessen the swelling so that I could see. I showed up an hour late to work every morning, excused myself to cry in the stairwells, I can tell you all the best places in that building to cry where no one can hear you, the pain became so bad that I had to tell my boss I was leaving, I needed time because continuing day to day was not possible. I used my savings to go as far away as I could possibly be.
+
+I can’t sleep alone at night without having a light on, like a five year old, because I have nightmares of being touched where I cannot wake up, I did this thing where I waited until the sun came up and I felt safe enough to sleep. For three months, I went to bed at six o’clock in the morning.
+
+I used to pride myself on my independence, now I am afraid to go on walks in the evening, to attend social events with drinking among friends where I should be comfortable being. I have become a little barnacle always needing to be at someone’s side, to have my boyfriend standing next to me, sleeping beside me, protecting me. It is embarrassing how feeble I feel, how timidly I move through life, always guarded, ready to defend myself, ready to be angry.
+
+You have no idea how hard I have worked to rebuild parts of me that are still weak. It took me eight months to even talk about what happened. I could no longer connect with friends, with everyone around me. I would scream at my boyfriend, my own family whenever they brought this up. You never let me forget what happened to me. At the of end of the hearing, the trial, I was too tired to speak. I would leave drained, silent. I would go home turn off my phone and for days I would not speak. You bought me a ticket to a planet where I lived by myself. Every time a new article come out, I lived with the paranoia that my entire hometown would find out and know me as the girl who got assaulted. I didn’t want anyone’s pity and am still learning to accept victim as part of my identity. You made my own hometown an uncomfortable place to be.
+
+Someday, you can pay me back for my ambulance ride and therapy. But you cannot give me back my sleepless nights. The way I have broken down sobbing uncontrollably if I’m watching a movie and a woman is harmed, to say it lightly, this experience has expanded my empathy for other victims. I have lost weight from stress, when people would comment I told them I’ve been running a lot lately. There are times I did not want to be touched. I have to relearn that I am not fragile, I am capable, I am wholesome, not just livid and weak.
+
+I want to say this. All the crying, the hurting you have imposed on me, I can take it. But when I see my younger sister hurting, when she is unable to keep up in school, when she is deprived of joy, when she is not sleeping, when she is crying so hard on the phone she is barely breathing, telling me over and over she is sorry for leaving me alone that night, sorry sorry sorry, when she feels more guilt than you, then I do not forgive you. That night I had called her to try and find her, but you found me first. Your attorney’s closing statement began, “My sister said she was fine and who knows her better than her sister.” You tried to use my own sister against me. Your points of attack were so weak, so low, it was almost embarrassing. You do not touch her.
+
+If you think I was spared, came out unscathed, that today I ride off into sunset, while you suffer the greatest blow, you are mistaken. Nobody wins. We have all been devastated, we have all been trying to find some meaning in all of this suffering.
+
+You should have never done this to me. Secondly, you should have never made me fight so long to tell you, you should have never done this to me. But here we are. The damage is done, no one can undo it. And now we both have a choice. We can let this destroy us, I can remain angry and hurt and you can be in denial, or we can face it head on, I accept the pain, you accept the punishment, and we move on.
+
+Your life is not over, you have decades of years ahead to rewrite your story. The world is huge, it is so much bigger than Palo Alto and Stanford, and you will make a space for yourself in it where you can be useful and happy. Right now your name is tainted, so I challenge you to make a new name for yourself, to do something so good for the world, it blows everyone away. You have a brain and a voice and a heart. Use them wisely. You possess immense love from your family. That alone can pull you out of anything. Mine has held me up through all of this. Yours will hold you and you will go on.
+
+I believe, that one day, you will understand all of this better. I hope you will become a better more honest person who can properly use this story to prevent another story like this from ever happening again. I fully support your journey to healing, to rebuilding your life, because that is the only way you’ll begin to help others.
+
+Now to address the sentencing. When I read the probation officer’s report, I was in disbelief, consumed by anger which eventually quieted down to profound sadness. My statements have been slimmed down to distortion and taken out of context. I fought hard during this trial and will not have the outcome minimized by a probation officer who attempted to evaluate my current state and my wishes in a fifteen minute conversation, the majority of which was spent answering questions I had about the legal system. The context is also important. Brock had yet to issue a statement, and I had not read his remarks.
+
+My life has been on hold for over a year, a year of anger, anguish and uncertainty, until a jury of my peers rendered a judgment that validated the injustices I had endured. Had Brock admitted guilt and remorse and offered to settle early on, I would have considered a lighter sentence, respecting his honesty, grateful to be able to move our lives forward. Instead he took the risk of going to trial, added insult to injury and forced me to relive the hurt as details about my personal life and sexual assault were brutally dissected before the public. He pushed me and my family through a year of inexplicable, unnecessary suffering, and should face the consequences of challenging his crime, of putting my pain into question, of making us wait so long for justice.
+
+I told the probation officer I do not want Brock to rot away in prison. I did not say he does not deserve to be behind bars. The probation officer’s recommendation of a year or less in county jail is a soft time-out, a mockery of the seriousness of his assaults, and of the consequences of the pain I have been forced to endure. I also told the probation officer that what I truly wanted was for Brock to get it, to understand and admit to his wrongdoing.
+
+Unfortunately, after reading the defendant’s statement, I am severely disappointed and feel that he has failed to exhibit sincere remorse or responsibility for his conduct. I fully respected his right to a trial, but even after twelve jurors unanimously convicted him guilty of three felonies, all he has admitted to doing is ingesting alcohol. Someone who cannot take full accountability for his actions does not deserve a mitigating sentence. It is deeply offensive that he would try and dilute rape with a suggestion of promiscuity. By definition rape is the absence of promiscuity, rape is the absence of consent, and it perturbs me deeply that he can’t even see that distinction.
+
+The probation officer factored in that the defendant is youthful and has no prior convictions. In my opinion, he is old enough to know what he did was wrong. When you are eighteen in this country you can go to war. When you are nineteen, you are old enough to pay the consequences for attempting to rape someone. He is young, but he is old enough to know better.
+
+As this is a first offense I can see where leniency would beckon. On the other hand, as a society, we cannot forgive everyone’s first sexual assault or digital rape. It doesn’t make sense. The seriousness of rape has to be communicated clearly, we should not create a culture that suggests we learn that rape is wrong through trial and error. The consequences of sexual assault needs to be severe enough that people feel enough fear to exercise good judgment even if they are drunk, severe enough to be preventative. The fact that Brock was a star athlete at a prestigious university should not be seen as an entitlement to leniency, but as an opportunity to send a strong cultural message that sexual assault is against the law regardless of social class.
+
+The probation officer weighed the fact that he has surrendered a hard earned swimming scholarship. If I had been sexually assaulted by an un-athletic guy from a community college, what would his sentence be? If a first time offender from an underprivileged background was accused of three felonies and displayed no accountability for his actions other than drinking, what would his sentence be? How fast he swims does not lessen the impact of what happened to me.
+
+The Probation Officer has stated that this case, when compared to other crimes of similar nature, may be considered less serious due to the defendant’s level of intoxication. It felt serious. That’s all I’m going to say.
+
+He is a lifetime sex registrant. That doesn’t expire. Just like what he did to me doesn’t expire, doesn’t just go away after a set number of years. It stays with me, it’s part of my identity, it has forever changed the way I carry myself, the way I live the rest of my life.
+
+A year has gone by and he has had lots of time on his hands. Has he been seeing a psychologist? What has he done in this past year to show he’s been progressing? If he says he wants to implement programs, what has he done to show for it?
+
+Throughout incarceration I hope he is provided with appropriate therapy and resources to rebuild his life. I request that he educates himself about the issue of campus sexual assault. I hope he accepts proper punishment and pushes himself to reenter society as a better person.
+
+To conclude, I want to say thank you. To everyone from the intern who made me oatmeal when I woke up at the hospital that morning, to the deputy who waited beside me, to the nurses who calmed me, to the detective who listened to me and never judged me, to my advocates who stood unwaveringly beside me, to my therapist who taught me to find courage in vulnerability, to my boss for being kind and understanding, to my incredible parents who teach me how to turn pain into strength, to my friends who remind me how to be happy, to my boyfriend who is patient and loving, to my unconquerable sister who is the other half of my heart, to Alaleh, my idol, who fought tirelessly and never doubted me. Thank you to everyone involved in the trial for their time and attention. Thank you to girls across the nation that wrote cards to my DA to give to me, so many strangers who cared for me.
+
+Most importantly, thank you to the two men who saved me, who I have yet to meet. I sleep with two bicycles that I drew taped above my bed to remind myself there are heroes in this story. That we are looking out for one another. To have known all of these people, to have felt their protection and love, is something I will never forget.
+
+And finally, to girls everywhere, I am with you. On nights when you feel alone, I am with you. When people doubt you or dismiss you, I am with you. I fought everyday for you. So never stop fighting, I believe you. Lighthouses don’t go running all over an island looking for boats to save; they just stand there shining. Although I can’t save every boat, I hope that by speaking today, you absorbed a small amount of light, a small knowing that you can’t be silenced, a small satisfaction that justice was served, a small assurance that we are getting somewhere, and a big, big knowing that you are important, unquestionably, you are untouchable, you are beautiful, you are to be valued, respected, undeniably, every minute of every day, you are powerful and nobody can take that away from you. To girls everywhere, I am with you. Thank you.
+
+""")
+print(out)
+'''

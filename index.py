@@ -26,11 +26,12 @@ def index():
     data["video"] = result[10]
     data["status"] = result[11]
     decision = startProject(data)
-    cur = mysql.connection.cursor()
-    sql = '''UPDATE `complaints` SET `status` = %s WHERE `complaints`.`id` = %s'''
-    sqlv = (decision, data["id"])
-    cur.execute(sql, sqlv)
-    conn.commit()
+
+    # cur = mysql.connection.cursor()
+    # sql = '''UPDATE `complaints` SET `status` = %s WHERE `complaints`.`id` = %s'''
+    # sqlv = (decision, data["id"])
+    # cur.execute(sql, sqlv)
+    # conn.commit()
     return str(data)
 
 
