@@ -21,7 +21,7 @@ def calc(data, threshold, weight):
         result = result + 1
     if perEmo["surprise"] <= threshold["surprise"] + 2 or perEmo["surprise"] <= threshold["surprise"] - 2:
         result = result + 1
-    print(perEmo)
+    # print(perEmo)
     result = result / 6 * 100
     result = result * weight / 100
     return result
@@ -37,12 +37,12 @@ def decide(videoEmo, statementEmo, audioEmo):
                       "surprise": 5.2944, "neutral": 50.7563}
 
     percentage = percentage + calc(videoEmo, thersvideo, 55)
-    print(percentage)
+    # print(percentage)
     percentage = percentage + calc(statementEmo, thersstatement, 25)
-    print(percentage)
+    # print(percentage)
     if audioEmo is not False:
         percentage = percentage + calc(audioEmo, thersaudio, 20)
-    print(percentage)
+    # print(percentage)
 
     if percentage >= 60:
         return "Accepted"

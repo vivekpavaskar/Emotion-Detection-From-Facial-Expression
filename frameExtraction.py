@@ -23,7 +23,7 @@ def extractFrames(path, dates):
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             cv2.imwrite(directoryF + "/frame%04d.jpg" % count, image)
             # start development
-            print(count)
+            # print(count)
             # end development
             count += 1
 

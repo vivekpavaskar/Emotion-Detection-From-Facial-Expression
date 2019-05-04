@@ -37,8 +37,8 @@ def filterKeyFrame(folder):
             i2 = Image.open(frames)
         except:
             break
-        # assert i1.mode == i2.mode, "Different kinds of images."
-        # assert i1.size == i2.size, "Different sizes."
+        assert i1.mode == i2.mode, "Different kinds of images."
+        assert i1.size == i2.size, "Different sizes."
         pairs = zip(i1.getdata(), i2.getdata())
 
         if len(i1.getbands()) == 1:
@@ -60,7 +60,7 @@ def filterKeyFrame(folder):
         if diffValue > threshold:
             counts = counts + 1
             # start development
-            print("Difference (", j, i, "):", diffValue, "difference", counts)
+            # print("Difference (", j, i, "):", diffValue, "difference", counts)
             # cv2.imshow('keyframes', imgResize)
             # cv2.waitKey(0.2)
             # end development
@@ -74,5 +74,5 @@ def filterKeyFrame(folder):
         # start developement
         # else:
             # print("Difference (", j, i, "):", diffValue)
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 # end development
