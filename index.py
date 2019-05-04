@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_mysqldb import MySQL
-from main import startProject
+import main as m
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -25,14 +25,14 @@ def index():
     data["statement"] = result[9]
     data["video"] = result[10]
     data["status"] = result[11]
-    decision = startProject(data)
+    decision = m.startProject(data)
 
-    # cur = mysql.connection.cursor()
-    # sql = '''UPDATE `complaints` SET `status` = %s WHERE `complaints`.`id` = %s'''
-    # sqlv = (decision, data["id"])
-    # cur.execute(sql, sqlv)
-    # conn.commit()
-    return str(data)
+    cur = mysql.connection.cursor()
+    sql = '''UPDATE `complaints` SET `status` = %s WHERE `complaints`.`id` = %s'''
+    sqlv = (decision, data["id"])
+    cur.execute(sql, sqlv)
+    conn.commit()
+    return "One Complaint Processed"
 
 
 if __name__ == '__main__':

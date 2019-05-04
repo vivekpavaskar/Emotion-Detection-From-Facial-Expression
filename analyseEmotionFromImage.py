@@ -1,5 +1,6 @@
 from keras.models import model_from_json
 from keras.optimizers import SGD
+from keras import backend as K
 import numpy as np
 import cv2
 from time import sleep
@@ -79,41 +80,41 @@ def readEmotions(folder):
                 if prediction_result == 3:
                     videoEmo["happy"] += 1
                     # print("happy")
-                    # cv2.putText(frame, "Happy!!", (x, y), cv2.FONT_ITALIC, 2, 155, 10)
+                    cv2.putText(frame, "Happy!!", (x, y), cv2.FONT_ITALIC, 2, 155, 10)
                 elif prediction_result == 0:
                     videoEmo["anger"] += 1
                     # print("angry")
-                    # cv2.putText(frame, "Angry", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Angry", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 1:
                     videoEmo["disgust"] += 1
                     # print("disgust")
-                    # cv2.putText(frame, "Disgust", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Disgust", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 2:
                     videoEmo["fear"] += 1
                     # print("fear")
-                    # cv2.putText(frame, "Fear", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Fear", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 4:
                     videoEmo["sad"] += 1
                     # print("sad")
-                    # cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Sad", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 elif prediction_result == 5:
                     videoEmo["surprise"] += 1
                     # print("surprise")
-                    # cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Surprise", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
                 else:
                     videoEmo["neutral"] += 1
                     # print("neutral")
-                    # cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
+                    cv2.putText(frame, "Neutral", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 2, 155, 10)
 
                 # increment counter
                 face_index += 1
 
         # start development
         # cv2.imshow('Video', frame)
-        # print(videoEmo)
+        print(videoEmo)
         # cv2.waitKey(1)
 
     # cv2.destroyAllWindows()
     # end development
-
+    K.clear_session()
     return videoEmo

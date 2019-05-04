@@ -51,8 +51,8 @@ def filterKeyFrame(folder):
 
         diffsN = (dif / 255.0 * 10000000) / ncomponents
         img = cv2.imread(frames)
-        imgResize = cv2.resize(img, (int(img.shape[1] / 2), int(img.shape[0] / 2)))
         # start devlopment
+        # imgResize = cv2.resize(img, (int(img.shape[1] / 2), int(img.shape[0] / 2)))
         # cv2.imshow('frames', imgResize)
         # cv2.waitKey(1)
         # end development
@@ -60,9 +60,9 @@ def filterKeyFrame(folder):
         if diffValue > threshold:
             counts = counts + 1
             # start development
-            # print("Difference (", j, i, "):", diffValue, "difference", counts)
+            print("Difference (", j, i, "):", diffValue, "difference", counts)
             # cv2.imshow('keyframes', imgResize)
-            # cv2.waitKey(1)
+            # cv2.waitKey(0.2)
             # end development
             diffsP = diffsN
             j = i
@@ -73,6 +73,6 @@ def filterKeyFrame(folder):
             cv2.imwrite(keyFrames, imgp)
         # start developement
         # else:
-        #     print("Difference (", j, i, "):", diffValue)
-    # cv2.destroyAllWindows()
+            # print("Difference (", j, i, "):", diffValue)
+    cv2.destroyAllWindows()
 # end development

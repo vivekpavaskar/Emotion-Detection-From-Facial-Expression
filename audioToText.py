@@ -1,9 +1,9 @@
 import speech_recognition as sr
 
 
-def a2t():
+def a2t(path):
     r = sr.Recognizer()
-    with sr.WavFile("videos/audio.wav") as source:
+    with sr.WavFile(path) as source:
         audio = r.listen(source)
     try:
         texts = r.recognize_google(audio)
